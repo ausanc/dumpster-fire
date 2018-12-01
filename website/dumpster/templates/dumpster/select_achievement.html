@@ -7,7 +7,17 @@
 <div class="row">
     {% for achievement in achievements %}
     <div class="col-md-4">
+
         App ID: {{ achievement.name }}
+        <form action="{% url 'make_new_hook' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="steamID" value="{{ steam_id }}">
+            <input type="hidden" name="appID" value="{{ app_id }}">
+            <input type="hidden" name="achievementName" value="{{ achievement.name }}">
+            <button type="submit" class="btn btn-primary">Make hook</button>
+        </form>
+        {{ achievement }}
+        
     </div>
     {% endfor %}
 </div>
