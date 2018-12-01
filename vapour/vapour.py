@@ -28,20 +28,38 @@ class game:
         self.game_name = self.game["gameName"]
         self.achievements = self.game["availableGameStats"]["achievements"]
 
+    def get_all_achievements(self):
+        all_achievements = []
+        for x in range(0, len(self.achievements)):
+            achievement_to_add = achievement(self)
+            achievement_to_add.manual_init(self, x)
+            all_achievements.append(achievement_to_add)
+        return all_achievements
+
 class achievement:
-    def __init__(self, game, achievement_id):
+    def __init__(self, igame, achievement_id=0):
         self.achievement_id = achievement_id
-        self.achievements = game.achievements
-        x = 0
-        for iachievement in self.achievements:
-            if not iachievement["name"] == achievement_id:
-                x += 1
-            else:
-                break
-        print("Achievement Position: " + str(x))
-        self.achievement_id_json = self.achievements[x]["name"]
-        self.achievement_name = self.achievements[x]["displayName"]
-        self.achievement_description = self.achievements[x]["description"]
-        self.achievement_hidden = self.achievements[x]["hidden"]
-        self.achievement_icon = self.achievements[x]["icon"]
-        self.achievement_icon_grey = self.achievements[x]["icongray"]
+        self.achievements = igame.achievements
+        self.achievement_name = ""
+        self.achievement_description = ""
+        self.achievement_hidden = 0
+        self.achievement_icon = ""
+        self.achievement_icon_grey = ""
+        if not achievement_id == 0:
+            x = 0
+            for iachievement in self.achievements:
+                if not iachievement["name"] == achievement_id:
+                    x += 1
+                else:
+                    break
+            self.manual_init(igame, x)
+
+    
+    def manual_init(self, game, pos):
+        self.achievement_id = self.achievements[pos]["name"]
+        self.achievement_name = self.achievements[pos]["displayName"]
+        self.achievement_description = self.achievements[pos]["description"]
+        self.achievement_hidden = self.achievements[pos]["hidden"]
+        self.achievement_icon = self.achievements[pos]["icon"]
+        self.achievement_icon_grey = self.achievements[pos]["icongray"]
+
