@@ -1,0 +1,13 @@
+{% extends "dumpster/base.html" %}
+
+{% block title %}Select a game for the user{% endblock %}
+
+{% block content %}
+<div class="row">
+    {% for game_json in games_json %}
+    <div class="col-md-4">
+        App ID: {{ game_json.appid }}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
