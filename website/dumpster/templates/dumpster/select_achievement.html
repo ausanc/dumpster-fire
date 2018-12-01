@@ -6,17 +6,32 @@
 {{ achievements|length }}
 <div class="row">
     {% for achievement in achievements %}
-    <div class="col-md-4">
+    <div class="col-md-4 mt-md-3">
 
-        App ID: {{ achievement.name }}
         <form action="{% url 'make_new_hook' %}" method="POST">
             {% csrf_token %}
             <input type="hidden" name="steamID" value="{{ steam_id }}">
             <input type="hidden" name="appID" value="{{ app_id }}">
-            <input type="hidden" name="achievementName" value="{{ achievement.name }}">
-            <button type="submit" class="btn btn-primary">Make hook</button>
+            <input type="hidden" name="achievementName" value="{{ achievement.achievement_id }}">
+
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img class="rounded" src="{{ achievement.achievement_icon }}" alt="achievement icon">
+                        </div>
+                        <div class="col-md-9">
+                            <h5 class="card-title">{{ achievement.achievement_name }}</h5>
+                            <p class="card-text">{{ achievement.achievement_description }}</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block mt-md-1">Make hook</button>
+                </div>
+            </div>
+
         </form>
-        {{ achievement }}
         
     </div>
     {% endfor %}

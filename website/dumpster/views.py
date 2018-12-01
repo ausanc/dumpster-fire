@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.core import serializers
 from background_task import background
 from .hook_functions import update_hook
+from .vapour import game, profile, get_game_id_list
 
 app_id_to_name = {}
 for appinfo in names["applist"]["apps"]:
@@ -22,15 +23,16 @@ class InputSteamURL(View):
         return render(request, 'dumpster/input_user.html')
 
     def post(self, request):
-        return redirect('select_game', steam_id='0123456789')
+        return redirect('select_game', steam_id='76561198015546177')
 
 
 def select_game(request, steam_id):
+    user = profile(steam_id)
     games = []
-    for game in user_game_list_sample["response"]["games"]:
+    for game in get_game_id_list(user):
         games.append({
-            "appid": game["appid"],
-            "name": app_id_to_name[game["appid"]]
+            "appid": game,
+            "name": app_id_to_name[game]
         })
     context = {
         "games": games,
@@ -40,8 +42,10 @@ def select_game(request, steam_id):
 
 
 def select_achieve(request, steam_id, app_id):
+    game_object = game(app_id)
+    achievements = game_object.get_all_achievements()
     context = {
-        "achievements": user_stats_example["playerstats"]["achievements"],
+        "achievements": achievements,
         "steam_id": steam_id,
         "app_id": app_id,
     }
