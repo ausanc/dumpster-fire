@@ -5,6 +5,7 @@ from .models import Hook
 from django.http import JsonResponse
 from django.core import serializers
 from background_task import background
+from .hook_functions import update_hook
 
 app_id_to_name = {}
 for appinfo in names["applist"]["apps"]:
@@ -58,7 +59,7 @@ def make_new_hook(request):
         hook = Hook(account_url=steam_id, game_id=app_id, achievement_id=achievement_name)
         hook.save()
 
-    return render(request, 'dumpster/index.html')
+    return redirect('view_hooks')
 
 
 def view_hooks(request):
@@ -76,3 +77,7 @@ def starttasks(request):
 @background(schedule=10)
 def task_check_hooks():
     print("HOOK CHECKS HERE")
+    hooks = Hook.objects.filter(completed_on=None)
+    for hook in hooks:
+        update_hook(hook)
+    print(hooks)
