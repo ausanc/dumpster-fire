@@ -4,6 +4,7 @@ from .sample_json import user_game_list_sample, user_stats_example, names
 from .models import Hook
 from django.http import JsonResponse
 from django.core import serializers
+from background_task import background
 
 app_id_to_name = {}
 for appinfo in names["applist"]["apps"]:
@@ -64,3 +65,14 @@ def view_hooks(request):
     qs = Hook.objects.all()
     qs_json = serializers.serialize('json', qs)
     return JsonResponse(qs_json, safe=False)
+
+
+def starttasks(request):
+    print("Adding hook task")
+    task_check_hooks(repeat=10)
+    return JsonResponse({})
+
+
+@background(schedule=10)
+def task_check_hooks():
+    print("HOOK CHECKS HERE")
