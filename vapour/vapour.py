@@ -1,5 +1,5 @@
 from steam_key import key
-import json, urllib.request
+import json, urllib.request, time
 
 def api_request(url):
     response = urllib.request.urlopen(url)
@@ -7,6 +7,13 @@ def api_request(url):
     data = json.loads(contents)
     response.close()
     return data
+
+def get_game_id_list(profile):
+    game_list = []
+    data = api_request("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%s&format=json" % (key, profile.steam_id))
+    for game_json in data["response"]["games"]:
+        game_list.append(game_json["appid"])
+    return game_list
 
 
 class profile:
