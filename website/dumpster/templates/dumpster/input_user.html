@@ -9,7 +9,8 @@
             <div class="card mt-md-3">
                 <div class="card-body">
                     
-                    <form>
+                    <form method="POST">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label for="profileInput">Steam Profile URL</label>
                             <input type="text" class="form-control" id="profileInput" placeholder="Steam profile URL">
