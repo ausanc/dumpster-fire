@@ -6,7 +6,9 @@
 <div class="row">
     {% for game_json in games_json %}
     <div class="col-md-4">
+    <a href="{% url 'select_achieve' steam_id game_json.appid %}">
         App ID: {{ game_json.appid }}
+    </a>
     </div>
     {% endfor %}
 </div>

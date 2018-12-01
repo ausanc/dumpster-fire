@@ -16,5 +16,12 @@ class InputSteamURL(View):
 
 
 def select_game(request, steam_id):
-    context = {"games_json": user_game_list_sample["response"]["games"]}
+    context = {
+        "games_json": user_game_list_sample["response"]["games"],
+        "steam_id": steam_id,
+    }
     return render(request, 'dumpster/select_game.html', context)
+
+
+def select_achieve(request, steam_id, app_id):
+    return render(request, 'dumpster/index.html')
