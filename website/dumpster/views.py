@@ -7,7 +7,8 @@ from django.http import JsonResponse
 from django.core import serializers
 from background_task import background
 from .hook_functions import update_hook
-from .vapour import game, profile, get_game_id_list
+from .vapour import game, profile, get_game_id_list, api_request
+from .steam_key import key
 
 app_id_to_name = {}
 for appinfo in names["applist"]["apps"]:
@@ -51,6 +52,18 @@ def select_game(request, steam_id):
 def select_achieve(request, steam_id, app_id):
     game_object = game(app_id)
     achievements = game_object.get_all_achievements()
+
+    url = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=%s&key=%s&steamid=%s"
+    steam_api_url = url % (app_id, key, steam_id)
+    data = api_request(steam_api_url)
+    unlocked = data["playerstats"]["achievements"]
+    unlocked_ids = []
+    for item in unlocked:
+        unlocked_ids.append(item["name"])
+
+    for item in achievements:
+        item.unlocked = item.achievement_id in unlocked_ids
+
     context = {
         "achievements": achievements,
         "steam_id": steam_id,
@@ -67,14 +80,23 @@ def make_new_hook(request):
         achievement_name = request.POST.get('achievementName')
         print(steam_id, app_id, achievement_name)
 
-        hook = Hook(account_url=steam_id, game_id=app_id, achievement_id=achievement_name)
+        game_object = game(app_id)
+        achievements = game_object.get_all_achievements()
+        ach_name = ""
+        icon_url = ""
+        for achievement in achievements:
+            if achievement.achievement_id == achievement_name:
+                ach_name = achievement.achievement_name
+                icon_url = achievement.achievement_icon
+
+        hook = Hook(account_url=steam_id, game_id=app_id, achievement_id=achievement_name, ach_name=ach_name, icon_url=icon_url, game_name=game_object.game_name)
         hook.save()
 
     return redirect('view_hooks')
 
 
 def view_hooks(request):
-    hooks = Hook.objects.all()
+    hooks = Hook.objects.all().order_by("-created_on")
     context = {
         "hooks": hooks,
     }
@@ -90,7 +112,7 @@ def starttasks(request):
 @background(schedule=10)
 def task_check_hooks():
     print("HOOK CHECKS HERE")
-    hooks = Hook.objects.filter(completed_on=None)
+    hooks = Hook.objects.filter(completed=False)
     for hook in hooks:
         update_hook(hook)
     print(hooks)

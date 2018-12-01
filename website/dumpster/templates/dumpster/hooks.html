@@ -2,32 +2,72 @@
 
 {% block title %}Hooks{% endblock %}
 
+{% block header %}
+<meta http-equiv="refresh" content="5">
+{% endblock %}
+
 {% block content %}
 
 <div class="row">
 
-    <div class="col-md-6 offset-md-3">
-        <div class="row">
-
-
- 
+<div class="col-md-6">
+    <div class="row">
 
 {% for hook in hooks %}
-<div class="col-md-12">
-User {{ hook.account_url }}
+{% if not hook.completed %}
 
-Achievement {{ hook.achievement_id }} from game {{ hook.game_id }}
-
-{{ hook }}
-
-<a href="{% url 'delete_hook' hook.id %}" class="btn btn-danger">delete hook</a>
-
+<div class="col-md-12 mt-md-3">
+<div class="card text-white bg-secondary">
+    <div class="card-body">
+        <h5 class="card-title">Hook #{{ hook.id }} - still locked</h5>
+        <p class="card-text">
+            User: {{ hook.account_url }}
+            <br>
+            Game: {{ hook.game_name }}
+            <br>
+            Achievement: {{ hook.ach_name }}
+        </p>
+        <a href="{% url 'delete_hook' hook.id %}" class="btn btn-danger btn-block">delete hook</a>
+    </div>
 </div>
+</div>
+
+{% endif %}
+{% endfor %}
+
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="row">
+
+{% for hook in hooks %}
+{% if hook.completed %}
+
+<div class="col-md-12 mt-md-3">
+<div class="card text-white bg-success">
+    <div class="card-body">
+        <h5 class="card-title">Hook #{{ hook.id }} - unlocked!</h5>
+        <p class="card-text">
+            User: {{ hook.account_url }}
+            <br>
+            Game: {{ hook.game_name }}
+            <br>
+            Achievement: {{ hook.ach_name }}
+        </p>
+        <a href="{% url 'delete_hook' hook.id %}" class="btn btn-danger btn-block">delete hook</a>
+    </div>
+</div>
+</div>
+
+{% endif %}
 {% endfor %}
 
 </div>
 </div>
 
 </div>
+
+
 
 {% endblock %}

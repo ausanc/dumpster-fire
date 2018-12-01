@@ -15,7 +15,7 @@ def update_hook(hook: Hook):
                 if achievement["achieved"] == 1:
                     print("USER %s HAS UNLOCKED %s IN GAME %s" %
                         (hook.account_url, hook.achievement_id, hook.game_id))
-                    hook.completed_on = "SOMETHING"
+                    hook.completed = True
                     hook.save()
     except:
         pass

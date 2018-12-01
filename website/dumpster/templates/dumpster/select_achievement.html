@@ -3,7 +3,6 @@
 {% block title %}Select an achievement to track{% endblock %}
 
 {% block content %}
-{{ achievements|length }}
 <div class="row">
     {% for achievement in achievements %}
     <div class="col-md-4 mt-md-3">
@@ -27,7 +26,11 @@
                         </div>
                     </div>
 
+                    {% if achievement.unlocked %}
+<button type="submit" class="btn btn-secondary btn-block mt-md-1">already unlocked</button>
+                    {% else %}
                     <button type="submit" class="btn btn-primary btn-block mt-md-1">Make hook</button>
+                    {% endif %}
                 </div>
             </div>
 
