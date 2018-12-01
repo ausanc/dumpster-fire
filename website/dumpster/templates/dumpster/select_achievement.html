@@ -1,0 +1,14 @@
+{% extends "dumpster/base.html" %}
+
+{% block title %}Select an achievement to track{% endblock %}
+
+{% block content %}
+{{ achievements|length }}
+<div class="row">
+    {% for achievement in achievements %}
+    <div class="col-md-4">
+        App ID: {{ achievement.name }}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
