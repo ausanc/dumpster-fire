@@ -15,6 +15,42 @@ def get_game_id_list(profile):
         game_list.append(game_json["appid"])
     return game_list
 
+def get_game_list(profile):
+    game_list = []
+    data = api_request("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%s&include_appinfo=1&format=json" % (key, profile.steam_id))
+    for game_json in data["response"]["games"]:
+        working_game = game_info()
+        try:
+            working_game.set_game_id(game_json["appid"])
+        except KeyError:
+            pass
+        try:
+            working_game.set_game_name(game_json["name"])
+        except KeyError:
+            pass
+        try:
+            working_game.set_game_icon(game_json["img_icon_url"])
+        except KeyError:
+            pass
+        try:
+            working_game.set_game_logo(game_json["img_logo_url"])
+        except KeyError:
+            pass
+        try:
+            working_game.set_game_playtime(game_json["playtime_forever"])
+        except KeyError:
+            pass
+        try:
+            working_game.set_game_playtime_fortnight(game_json["playtime_2weeks"])
+        except KeyError:
+            pass
+        try:
+            working_game.set_game_has_achievements(game_json["has_community_visible_stats"])
+        except KeyError:
+            pass 
+        game_list.append(working_game)
+    return game_list
+
 
 class profile:
 
@@ -26,6 +62,31 @@ class profile:
         self.real_name = self.player["realname"]
         self.profile_url = self.player["profileurl"]
         self.avatar = self.player["avatarfull"]
+
+class game_info:
+    def __init__(self):
+        self.game_id = ""
+        self.game_name = ""
+        self.game_icon = ""
+        self.game_logo = ""
+        self.game_playtime = ""
+        self.game_playtime_fortnight = ""
+        self.game_has_achievements = ""
+
+    def set_game_id(self, game_id):
+        self.game_id = game_id
+    def set_game_name(self, game_name):
+        self.game_name = game_name
+    def set_game_icon(self, game_icon):
+        self.game_icon = game_icon
+    def set_game_logo(self, game_logo):
+        self.game_logo = game_logo
+    def set_game_playtime(self, game_playtime):
+        self.game_playtime = game_playtime
+    def set_game_playtime_fortnight(self, game_playtime_fortnight):
+        self.game_playtime_fortnight = game_playtime_fortnight
+    def set_game_has_achievements(self, game_has_achievements):
+        self.game_has_achievements = game_has_achievements
 
 class game:
     def __init__(self, game_id):
