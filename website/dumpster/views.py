@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.core import serializers
 from background_task import background
 from .hook_functions import update_hook
-from .vapour import game, profile, get_game_id_list, api_request
+from .vapour import game, profile, get_game_id_list, api_request, get_game_list
 from .steam_key import key
 
 app_id_to_name = {}
@@ -36,6 +36,7 @@ class InputSteamURL(View):
 
 def select_game(request, steam_id):
     user = profile(steam_id)
+    game_list = get_game_list(user)
     games = []
     for game in get_game_id_list(user):
         games.append({
@@ -43,7 +44,7 @@ def select_game(request, steam_id):
             "name": app_id_to_name[game]
         })
     context = {
-        "games": games,
+        "games": game_list,
         "steam_id": steam_id,
     }
     return render(request, 'dumpster/select_game.html', context)

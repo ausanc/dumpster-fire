@@ -5,11 +5,21 @@
 {% block content %}
 <div class="row">
     {% for game in games %}
-    <div class="col-md-4">
-    <a href="{% url 'select_achieve' steam_id game.appid %}">
-        {{ game.name }}
-    </a>
+
+{% if not game.game_id == 343450 %}
+
+<div class="col-md-3 mt-md-3">
+    <div class="card">
+        <img class="card-img-top" src="http://media.steampowered.com/steamcommunity/public/images/apps/{{ game.game_id }}/{{ game.game_logo }}.jpg">
+        <div class="card-body">
+            <h5 class="card-title">{{ game.game_name }}</h5>
+            <a href="{% url 'select_achieve' steam_id game.game_id %}" class="btn btn-primary btn-block">see achievements</a>
+        </div>
     </div>
+</div>
+
+{% endif %}
+
     {% endfor %}
 </div>
 {% endblock %}
