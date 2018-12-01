@@ -55,11 +55,14 @@ def select_achieve(request, steam_id, app_id):
 
     url = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=%s&key=%s&steamid=%s"
     steam_api_url = url % (app_id, key, steam_id)
-    data = api_request(steam_api_url)
-    unlocked = data["playerstats"]["achievements"]
     unlocked_ids = []
-    for item in unlocked:
-        unlocked_ids.append(item["name"])
+    try:
+        data = api_request(steam_api_url)
+        unlocked = data["playerstats"]["achievements"]
+        for item in unlocked:
+            unlocked_ids.append(item["name"])
+    except:
+        pass
 
     for item in achievements:
         item.unlocked = item.achievement_id in unlocked_ids
@@ -80,6 +83,7 @@ def make_new_hook(request):
         achievement_name = request.POST.get('achievementName')
         print(steam_id, app_id, achievement_name)
 
+        user = profile(steam_id)
         game_object = game(app_id)
         achievements = game_object.get_all_achievements()
         ach_name = ""
@@ -89,7 +93,7 @@ def make_new_hook(request):
                 ach_name = achievement.achievement_name
                 icon_url = achievement.achievement_icon
 
-        hook = Hook(account_url=steam_id, game_id=app_id, achievement_id=achievement_name, ach_name=ach_name, icon_url=icon_url, game_name=game_object.game_name)
+        hook = Hook(account_url=steam_id, game_id=app_id, achievement_id=achievement_name, ach_name=ach_name, icon_url=icon_url, game_name=game_object.game_name, profile_name=user.profile_name)
         hook.save()
 
     return redirect('view_hooks')

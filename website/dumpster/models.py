@@ -14,6 +14,7 @@ class Hook(models.Model):
     ach_name = models.CharField(max_length=255, null=False, blank=False, default=None)
     icon_url = models.CharField(max_length=255, null=False, blank=False, default=None)
     game_name = models.CharField(max_length=255, null=False, blank=False, default=None)
+    profile_name = models.CharField(max_length=255, null=False, blank=False, default=None)
     completed = models.BooleanField(null=False, default=False)
     # action_on_complete = models.CharField(max_length=1, choices=ACTIONS)
     created_on = models.DateTimeField(auto_now_add=True)
