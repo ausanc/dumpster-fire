@@ -11,4 +11,5 @@ urlpatterns = [
     path('makenewhook', views.make_new_hook, name='make_new_hook'),
     path('hooks', views.view_hooks, name='view_hooks'),
     path('starttaskrunner', views.starttasks),
+    path('deletehook/<int:hook_id>', views.delete_hook, name="delete_hook")
 ]

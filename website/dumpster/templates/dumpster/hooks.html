@@ -1,0 +1,33 @@
+{% extends "dumpster/base.html" %}
+
+{% block title %}Hooks{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-6 offset-md-3">
+        <div class="row">
+
+
+ 
+
+{% for hook in hooks %}
+<div class="col-md-12">
+User {{ hook.account_url }}
+
+Achievement {{ hook.achievement_id }} from game {{ hook.game_id }}
+
+{{ hook }}
+
+<a href="{% url 'delete_hook' hook.id %}" class="btn btn-danger">delete hook</a>
+
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+</div>
+
+{% endblock %}

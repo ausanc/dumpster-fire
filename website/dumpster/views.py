@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, render
 from django.views import View
 from .sample_json import user_game_list_sample, user_stats_example, names
@@ -23,7 +24,13 @@ class InputSteamURL(View):
         return render(request, 'dumpster/input_user.html')
 
     def post(self, request):
-        return redirect('select_game', steam_id='76561198015546177')
+        # get the input
+        # trim the input
+        inputURL = request.POST.get('profileInput')
+        steam_id = '76561198015546177'
+        if "/profiles/" in inputURL:
+            steam_id = inputURL[36:]
+        return redirect('select_game', steam_id=steam_id)
 
 
 def select_game(request, steam_id):
@@ -67,9 +74,11 @@ def make_new_hook(request):
 
 
 def view_hooks(request):
-    qs = Hook.objects.all()
-    qs_json = serializers.serialize('json', qs)
-    return JsonResponse(qs_json, safe=False)
+    hooks = Hook.objects.all()
+    context = {
+        "hooks": hooks,
+    }
+    return render(request, 'dumpster/hooks.html', context)
 
 
 def starttasks(request):
@@ -85,3 +94,9 @@ def task_check_hooks():
     for hook in hooks:
         update_hook(hook)
     print(hooks)
+
+
+def delete_hook(request, hook_id):
+    obj = get_object_or_404(Hook, pk=hook_id)
+    obj.delete()
+    return redirect('view_hooks')
